@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "outDir": "lib",
+    "sourceMap": true,
+    "strict": true,
+    "target": "es2017",
+    "strictNullChecks": true, //required for Yup https://github.com/jquense/yup#typescript-configuration
+    "strictFunctionTypes": false,  //required for Yup https://github.com/jquense/yup#typescript-configuration,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true
+  },
+  "compileOnSave": true,
+  "include": [
+    "src"
+  ]
+}
