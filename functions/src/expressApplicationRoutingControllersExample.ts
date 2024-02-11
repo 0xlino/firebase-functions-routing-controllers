@@ -14,7 +14,9 @@ const _registerCronJobs = (appConfig: any): any => {
       return false;
     }
 
-    return registerCronJobs([ExampleCronJob]);
+    registerCronJobs([ExampleCronJob]);
+
+    return true;
 }
 
 /**
@@ -33,13 +35,11 @@ expressApplication.get("/", (req: Request, res: Response) => {
 });
 
 useContainer(Container);
-cronUseContainer(Container);
 
-_registerCronJobs({
-    cronJobsEnabled: true
-});
-
-console.log('Cron Jobs Registered');
+if (_registerCronJobs({ cronJobsEnabled: true })){
+    cronUseContainer(Container);
+    console.log('Cron Jobs Registered');
+}
 
 useExpressServer(expressApplication,{
     controllers: [ThingController],
