@@ -7,7 +7,7 @@ import {
     UseAfter,
     UseInterceptor,
     Action,
-    Inject
+    Param
 } from 'routing-controllers';
 
 import { Service } from 'typedi';
@@ -19,7 +19,7 @@ import { ThingService } from './thing.service';
 @JsonController('/thing')
 export class ThingController {
     private thingService: ThingService;
-    constructor() { 
+    constructor() {
         this.thingService = new ThingService();
     }
 
@@ -35,12 +35,20 @@ export class ThingController {
     // Do something after the action
     @UseAfter(validateCreate)
     // Intercept the response and do something with it
-    @UseInterceptor(function(action: Action, content: any) {
-        // drop the dropped prop 
-        return delete content.dropped;
-    })
-    get(@CurrentUser() user: any, @GetCustomThing() thing: any) {
-        let a = this.thingService.getProducts({name: 'test'});
+    // @UseInterceptor(function (action: Action, content: any) {
+    //     // drop the dropped prop 
+    //     return delete content.dropped;
+    // })
+    /**
+     * @param user - The current user
+     * @param thing - The custom thing
+     */
+    get(
+        @CurrentUser() user: any,
+        @GetCustomThing() thing: any,
+        @Param('id') id?: number
+    ) {
+        let a = this.thingService.getProducts({ name: 'test' });
         return {
             user: user,
             message: 'This action returns all things',
@@ -49,4 +57,10 @@ export class ThingController {
             a: a
         }
     }
+
+    @Get('/:id')
+    async show(@Param('id') id: number): Promise<any | undefined> {
+        return 'test'
+    }
+
 }

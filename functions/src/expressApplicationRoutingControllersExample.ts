@@ -2,10 +2,11 @@ import 'reflect-metadata';
 import * as express from "express";
 import { Request, Response, Application } from "express";
 import { Container } from 'typedi';
-import { useExpressServer, useContainer } from 'routing-controllers';
+import { useExpressServer, useContainer, getMetadataArgsStorage } from 'routing-controllers';
 import { LoggingMiddleware } from './middleware/logging';
 import { CustomErrorHandler } from './customError';
 import { ThingController } from './thing/thing.controller';
+import { swaggerSpec } from './swagger';
 
 /**
  * Why this way and not nestjs, that becuase using routing-controllers is a lot more flexible 
@@ -22,9 +23,11 @@ expressApplication.get("/", (req: Request, res: Response) => {
     res.send("Hello World!");
 });
 
+let DOCS_ENABLED = 'true';
+
 useContainer(Container);
 
-useExpressServer(expressApplication,{
+useExpressServer(expressApplication, {
     controllers: [ThingController],
     middlewares: [
         // Stuff here runs before the controllers, global middleware
@@ -47,6 +50,20 @@ useExpressServer(expressApplication,{
         }
     }
 });
+
+const routingControllersOptions: any = {
+    // routePrefix: '/api/v1',
+    defaultErrorHandler: false,
+    cors: true,
+    // authorizationChecker: AuthorizationService.getInstance().authorizationChecker,
+    controllers: [ThingController],
+    interceptors: []
+};
+
+if (DOCS_ENABLED === 'true') {
+    console.log('DOCS_ENABLED');
+    swaggerSpec(getMetadataArgsStorage, routingControllersOptions, expressApplication);
+}
 
 export default expressApplication;
 
