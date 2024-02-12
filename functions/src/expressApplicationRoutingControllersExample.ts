@@ -6,6 +6,18 @@ import { useExpressServer, useContainer } from 'routing-controllers';
 import { LoggingMiddleware } from './middleware/logging';
 import { CustomErrorHandler } from './customError';
 import { ThingController } from './thing/thing.controller';
+import { registerController as registerCronJobs, useContainer as cronUseContainer } from 'cron-decorators';
+import { ExampleCronJob } from './cron/CronJob';
+
+const _registerCronJobs = (appConfig: any): any => {
+    if (!appConfig.cronJobsEnabled) {
+      return false;
+    }
+
+    registerCronJobs([ExampleCronJob]);
+
+    return true;
+}
 
 /**
  * Why this way and not nestjs, that becuase using routing-controllers is a lot more flexible 
@@ -23,6 +35,11 @@ expressApplication.get("/", (req: Request, res: Response) => {
 });
 
 useContainer(Container);
+
+if (_registerCronJobs({ cronJobsEnabled: true })){
+    cronUseContainer(Container);
+    console.log('Cron Jobs Registered');
+}
 
 useExpressServer(expressApplication,{
     controllers: [ThingController],
